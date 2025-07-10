@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fruit Catcher</title>
+  <style>
+    body {
+      text-align: center;
+      background-color: #e0ffe0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    canvas {
+      border: 2px solid #000;
+      background-color: #f0fff0;
+    }
+    h1, h2 {
+      margin: 10px;
+    }
+    #gameOver {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍓 Fruit Catcher 🍌</h1>
+  <canvas id="gameCanvas" width="400" height="600"></canvas>
+  <h2 id="score">Score: 0</h2>
+  <h2 id="gameOver" style="display:none;">Game Over! Refresh to Restart</h2>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let basket = { x: 160, y: 550, width: 80, height: 40, img: new Image() };
+    basket.img.src = 'images/basket.png';
+
+    const fruits = [];
+    const fruitImages = ['apple.png', 'banana.png', 'grape.png'];
+
+    let score = 0;
+    let missed = 0;
+
+    function spawnFruit() {
+      const img = new Image();
+      const type = fruitImages[Math.floor(Math.random() * fruitImages.length)];
+      img.src = 'images/' + type;
+      fruits.push({ x: Math.random() * 340, y: 0, width: 40, height: 40, img: img });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(basket.img, basket.x, basket.y, basket.width, basket.height);
+
+      fruits.forEach(fruit => {
+        ctx.drawImage(fruit.img, fruit.x, fruit.y, fruit.width, fruit.height);
+      });
+
+      document.getElementById('score').innerText = "Score: " + score;
+    }
+
+    function update() {
+      fruits.forEach((fruit, index) => {
+        fruit.y += 4;
+
+        // Check catch
+        if (
+          fruit.y + fruit.height > basket.y &&
+          fruit.x < basket.x + basket.width &&
+          fruit.x + fruit.width > basket.x
+        ) {
+          fruits.splice(index, 1);
+          score++;
+        }
+
+        // Missed
+        if (fruit.y > canvas.height) {
+          fruits.splice(index, 1);
+          missed++;
+          if (missed >= 3) {
+            document.getElementById('gameOver').style.display = 'block';
+            clearInterval(gameLoop);
+            clearInterval(spawnTimer);
+          }
+        }
+      });
+    }
+
+    document.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      basket.x = e.clientX - rect.left - basket.width / 2;
+    });
+
+    const gameLoop = setInterval(() => {
+      update();
+      draw();
+    }, 30);
+
+    const spawnTimer = setInterval(spawnFruit, 1000);
+  </script>
+</body>
+</html>
