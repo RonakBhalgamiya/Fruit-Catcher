@@ -1,6 +1,8 @@
 # 🍓 Fruit Catcher Game
 
-A fun browser-based game where you catch falling fruits with a basket. Built using HTML, CSS, and JavaScript — no frameworks required!
+A fun browser-based game where you catch falling fruits with a basket.
+<br>
+ Built using HTML, CSS, and JavaScript — no frameworks required!
 
 ---
 
